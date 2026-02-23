@@ -21,12 +21,12 @@ export const statusMap = {
 
 export const statusOptions = [
   { title: '全部', value: null },
+  { title: '審核中', value: 0 },
   { title: '報名中', value: 1 },
+  { title: '已駁回', value: 2 },
   { title: '已額滿', value: 3 },
   { title: '已截止', value: 4 },
   { title: '已結束', value: 5 },
-  { title: '審核中', value: 0 },
-  { title: '草稿', value: 7 },
-  { title: '已駁回', value: 2 },
   { title: '已取消', value: 6 },
+  { title: '草稿中', value: 7 },
 ]

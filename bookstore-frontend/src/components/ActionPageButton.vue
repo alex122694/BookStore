@@ -9,6 +9,11 @@ defineProps({
     icon: {
         type: String,
         default: 'mdi-plus'
+    },
+    // 允許設定圓角，預設為 null (由 Vuetify 或樣式決定)
+    rounded: {
+        type: String,
+        default: 'lg'
     }
 });
 
@@ -16,8 +21,8 @@ defineEmits(['click']);
 </script>
 
 <template>
-    <v-btn :color="color" :prepend-icon="icon" elevation="2" size="large" class="text-body-1 font-weight-bold"
-        @click="$emit('click')">
+    <v-btn :color="color" :prepend-icon="icon ? icon : undefined" elevation="2" size="large" :rounded="rounded"
+        class="text-body-1 font-weight-bold" @click="$emit('click')">
         <slot>新增</slot>
     </v-btn>
 </template>

@@ -10,6 +10,7 @@ import BookReviews from '@/views/public/reviews/BookReviews.vue'
 import { useLoginCheck } from '@/composables/useLoginCheck'
 import bookClubService from '@/api/bookClubService.js'
 import { useUserStore } from '@/stores/userStore'
+import { statusMap } from '@/views/public/club/UserBookClubConfig.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,15 +38,9 @@ const loadBookMsg = async () => {
     try {
       const clubResponse = await bookClubService.getAllClubs()
       if (clubResponse.data) {
-        // Filter: 
-        // 1. Same book
-        // 2. Status: 1(Registering), 3(Full), 4(Deadline), 5(Ended) - Maybe hide ended/cancelled?
-        // User requested "Show available sessions" or similar?
-        // "Joining content" - usually implies active ones.
-        // Let's show [1, 3, 4] (Active) and maybe 5 (Ended) for reference, filtering out draft/rejected/cancelled.
-        // Actually, let's just match the "All Clubs" filter: [1, 3, 4].
+        // Filter: 1(Registering), 3(Full), 4(Deadline), 5(Ended)
         relatedClubs.value = clubResponse.data.filter(club =>
-          club.book && club.book.bookId == bookId && [1, 3, 4].includes(club.status)
+          club.book && club.book.bookId == bookId && [1, 3, 4, 5].includes(club.status)
         )
       }
       // Load registration status
@@ -281,6 +276,13 @@ const handleCancel = (club) => {
   });
 };
 
+const getDisplayStatus = (item) => {
+  if (item.status === 1 && item.currentParticipants >= item.maxParticipants) {
+    return statusMap[3];
+  }
+  return statusMap[item.status] || { text: '未知', color: 'grey' };
+};
+
 onMounted(() => {
   if (bookId) {
     loadBookMsg()
@@ -393,9 +395,8 @@ onMounted(() => {
                 <td class="text-center">{{ club.location }}</td>
                 <td class="text-center">
                   {{ club.currentParticipants || 0 }} / {{ club.maxParticipants }}
-                  <v-chip size="x-small" class="ml-2"
-                    :color="club.currentParticipants >= club.maxParticipants ? 'error' : 'success'">
-                    {{ club.currentParticipants >= club.maxParticipants ? '已滿' : '報名中' }}
+                  <v-chip size="small" class="ml-2 font-weight-bold" :color="getDisplayStatus(club).color">
+                    {{ getDisplayStatus(club).text }}
                   </v-chip>
                 </td>
                 <td class="text-center">
@@ -405,9 +406,9 @@ onMounted(() => {
                     </v-btn>
 
                     <template v-if="myRegistrationIds.has(club.clubId)">
-                      <v-btn size="small" color="error" variant="flat" @click="handleCancel(club)">
+                      <!-- <v-btn size="small" color="error" variant="flat" @click="handleCancel(club)">
                         取消報名
-                      </v-btn>
+                      </v-btn> -->
                     </template>
                     <template v-else>
                       <!-- <v-btn size="small" color="primary" variant="elevated" @click="handleRegister(club)"

@@ -43,9 +43,10 @@ const statusMap = {
     1: { text: '報名中', color: 'green' },
     2: { text: '已駁回', color: 'red' },
     3: { text: '進行中', color: 'blue' },
-    4: { text: '已結束', color: 'grey' },
-    5: { text: '已取消', color: 'grey' },
-    9: { text: '駁回', color: 'error' }
+    4: { text: '已截止', color: 'grey' },
+    5: { text: '已結束', color: 'grey' },
+    6: { text: '已取消', color: 'grey' },
+    7: { text: '草稿中', color: 'grey' }
 };
 
 const getStatusInfo = (status) => {

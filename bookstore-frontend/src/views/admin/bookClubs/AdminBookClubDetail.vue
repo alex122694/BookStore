@@ -107,7 +107,7 @@ onMounted(() => {
 
             <!-- Header Actions Slot (Approve/Reject) -->
             <template #header-actions>
-                <div v-if="club.status === 0" class="d-flex gap-4">
+                <div v-if="club.status === 0" class="d-flex gap-4 justify-center">
                     <v-btn color="error" variant="outlined" size="large" prepend-icon="mdi-close"
                         @click="openRejectDialog">
                         駁回申請

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 // Import Registration Details Component
 import RegistrationDetails from './RegistrationDetails.vue';
 import ActionPageButton from '@/components/ActionPageButton.vue';
+import BookClubNotice from './BookClubNotice.vue';
 
 // Import Extracted Config
 import { headers, statusMap, statusOptions } from './UserBookClubConfig.js';
@@ -67,7 +68,7 @@ const loadAllClubs = async () => {
 
         const response = await bookClubService.getAllClubs();
         // 只顯示狀態為 1(報名中), 3(已額滿), 4(已截止) 的讀書會
-        allClubs.value = response.data.filter(club => [1, 3, 4].includes(club.status));
+        allClubs.value = response.data.filter(club => [1, 3, 4, 5].includes(club.status));
     } catch (error) {
         console.error('載入所有讀書會失敗', error);
         Swal.fire('錯誤', '無法載入所有讀書會資料', 'error');
@@ -234,8 +235,8 @@ const formatDate = (dateStr) => {
 };
 
 const isEventEnded = (club) => {
-    // 檢查狀態是否已結束 (5) 或已取消 (6)
-    if (club.status === 5 || club.status === 6) return true;
+    // 檢查狀態是否已截止(4)、已結束(5) 或已取消(6)
+    if ([4, 5, 6].includes(club.status)) return true;
 
     // 檢查時間是否已過
     if (club.eventDate) {
@@ -247,7 +248,7 @@ const isEventEnded = (club) => {
 const navigateToInsert = async () => {
     // Check if user is logged in
     if (!await validateLogin('您必須先登入帳號才能發起讀書會。')) return;
-    
+
     router.push('/dev/user/bookclubs/insert');
 };
 
@@ -289,12 +290,27 @@ onMounted(() => {
 
 <template>
     <v-container class="py-10" style="max-width: 1200px;">
-        <div class="d-flex flex-column align-start mb-6">
-            <h2 class="text-h4 font-weight-bold text-primary mb-4">讀書會專區</h2>
-            <ActionPageButton @click="navigateToInsert">
-                發起讀書會
-            </ActionPageButton>
+        <!-- Hero Section -->
+        <div class="club-hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content mx-4">
+                <h1 class="hero-title">森林讀書會</h1>
+                <h2 class="text-h5 mb-6 opacity-80">在閱讀中相遇，在交流中成長</h2>
+                <p class="hero-description">
+                    專屬愛書人的交流園地！我們相信，閱讀是獨處的快樂，而分享能讓思想碰撞出更多火花。
+                    歡迎您發起共讀，尋找志同道合的書友，或只是想聆聽不同的觀點，這裡都是您的最佳起點。
+                    擇您所愛，一起探索書中的無限可能。
+                </p>
+                <div class="d-flex justify-center align-center">
+                    <ActionPageButton color="white" :icon="null" rounded="pill" class="text-primary elevation-4"
+                        @click="navigateToInsert">
+                        發起讀書會
+                    </ActionPageButton>
+                    <BookClubNotice />
+                </div>
+            </div>
         </div>
+
 
         <v-card class="rounded-lg elevation-2">
             <v-tabs v-model="tab" color="primary" align-tabs="start">
@@ -363,10 +379,12 @@ onMounted(() => {
                                         </v-btn>
                                     </template>
                                     <template v-else>
-                                        <v-btn size="small" color="primary" variant="elevated"
-                                            @click="handleRegister(item)"
-                                            :disabled="item.currentParticipants >= item.maxParticipants">
-                                            {{ item.currentParticipants >= item.maxParticipants ? '已額滿' : '報名' }}
+                                        <!-- 僅限在活動尚未結束且狀態為報名中(1)或已額滿(3)時，才顯示報名按鈕 -->
+                                        <v-btn v-if="!isEventEnded(item) && [1, 3].includes(item.status)" size="small"
+                                            color="primary" variant="elevated" @click="handleRegister(item)"
+                                            :disabled="item.status === 3 || item.currentParticipants >= item.maxParticipants">
+                                            {{ (item.status === 3 || item.currentParticipants >= item.maxParticipants) ?
+                                                '已額滿' : '報名' }}
                                         </v-btn>
                                     </template>
                                 </template>

@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import bookClubService from '@/api/bookClubService.js';
 import Swal from 'sweetalert2';
+import RegistrationDetails from '@/views/public/club/RegistrationDetails.vue';
 
 const router = useRouter();
 const clubs = ref([]);
@@ -10,16 +11,27 @@ const loading = ref(false);
 const search = ref('');
 const statusFilter = ref(null);
 
+// Registration Details Modal Control
+const showDetailsModal = ref(false);
+const selectedClubId = ref(null);
+const selectedClubEventDate = ref(null);
+
+const openDetails = (club) => {
+    selectedClubId.value = club.clubId;
+    selectedClubEventDate.value = club.eventDate;
+    showDetailsModal.value = true;
+};
+
 const statusOptions = [
-  { title: '全部', value: null },
-  { title: '報名中', value: 1 },
-  { title: '已額滿', value: 3 },
-  { title: '已截止', value: 4 },
-  { title: '已結束', value: 5 },
-  { title: '審核中', value: 0 },
-  { title: '草稿', value: 7 },
-  { title: '已駁回', value: 2 },
-  { title: '已取消', value: 6 },
+    { title: '全部', value: null },
+    { title: '報名中', value: 1 },
+    { title: '已額滿', value: 3 },
+    { title: '已截止', value: 4 },
+    { title: '已結束', value: 5 },
+    { title: '審核中', value: 0 },
+    { title: '草稿', value: 7 },
+    { title: '已駁回', value: 2 },
+    { title: '已取消', value: 6 },
 ];
 
 // 表格標頭定義
@@ -158,8 +170,8 @@ onMounted(() => {
         </v-row>
 
         <v-card class="rounded-lg elevation-2 border-t-4 border-primary">
-            <v-data-table :headers="headers" :items="filteredClubs" :loading="loading" :search="search" class="forest-table"
-                item-value="clubId" hover>
+            <v-data-table :headers="headers" :items="filteredClubs" :loading="loading" :search="search"
+                class="forest-table" item-value="clubId" hover>
 
                 <!-- 主辦人 -->
                 <template v-slot:item.host="{ item }">
@@ -191,21 +203,29 @@ onMounted(() => {
                 <template v-slot:item.actions="{ item }">
                     <!-- 審核按鈕 (僅在審核中狀態顯示) -->
                     <div v-if="item.status === 0" class="d-flex justify-center">
-                        <v-btn color="primary" size="small" variant="elevated" @click="router.push({ name: 'admin-bookclubs-review', params: { id: item.clubId } })">
+                        <v-btn color="primary" size="small" variant="elevated"
+                            @click="router.push({ name: 'admin-bookclubs-review', params: { id: item.clubId } })">
                             <v-icon start icon="mdi-file-document-edit"></v-icon> 審核
                         </v-btn>
                     </div>
                     <!-- 其他狀態顯示檢視與刪除 -->
                     <div v-else class="d-flex justify-center align-center">
-                         <v-btn color="info" variant="text" size="small" icon="mdi-eye" class="mr-2"
-                            @click="router.push({ name: 'admin-bookclubs-review', params: { id: item.clubId } })"></v-btn>
-                        <v-btn color="grey" variant="text" size="small" icon="mdi-delete"
-                            @click="handleDelete(item)"></v-btn>
+                        <v-btn color="primary" variant="text" size="small" icon="mdi-clipboard-account" class="mr-2"
+                            @click="openDetails(item)" title="報名明細"></v-btn>
+                        <v-btn color="info" variant="text" size="small" icon="mdi-eye" class="mr-2"
+                            @click="router.push({ name: 'admin-bookclubs-review', params: { id: item.clubId } })"
+                            title="詳覽/審核"></v-btn>
+                        <v-btn color="grey" variant="text" size="small" icon="mdi-delete" @click="handleDelete(item)"
+                            title="刪除"></v-btn>
                     </div>
                 </template>
 
             </v-data-table>
         </v-card>
+
+        <!-- Registration Details Modal -->
+        <RegistrationDetails v-if="showDetailsModal" v-model="showDetailsModal" :club-id="selectedClubId"
+            :event-date="selectedClubEventDate" />
     </div>
 </template>
 
