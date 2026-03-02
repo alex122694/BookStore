@@ -1,0 +1,1 @@
+import{E as n,n as r}from"./index-CBaLCHUK.js";import{r as o}from"./reviewService-Dm7gj9Dv.js";const s=n("report",()=>{const t=r(0);return{pendingCount:t,fetchPendingCount:async()=>{try{const e=await o.getPendingReportCount();e.data&&e.data.count!==void 0&&(t.value=e.data.count)}catch(e){console.error("更新檢舉數量失敗",e)}}}});export{s as u};

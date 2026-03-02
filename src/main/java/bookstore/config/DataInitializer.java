@@ -69,46 +69,34 @@ public class DataInitializer {
 
 	private final Random random = new Random();
 
-	 @Bean
+	@Bean
 	public CommandLineRunner initData() {
 		return args -> {
 			log.info("=== 系統啟動：開始資料初始化流程 ===");
 
-			// 1. 檢查是否有書籍 (核心主軸)
-			long bookCount = bookRepository.count();
-			if (bookCount == 0) {
-				log.warn("!!! 警告：資料庫中沒有書籍 !!!");
-				log.warn("請先登入後台手動新增至少 1 本書籍，下次啟動時才會自動產生關聯數據。");
-
-				if (userRepository.count() == 0) {
-					createAdmin();
-				}
-				return;
+			// 1. 檢查會員資料 (Demo 核心)
+			long userCount = userRepository.count();
+			if (userCount == 0) {
+				log.info("偵測到無會員資料，開始產生初始管理員與會員...");
+				createUsers();
+			} else {
+				log.info("資料庫已有 {} 名會員，略過會員初始化。", userCount);
 			}
 
-			log.info("偵測到資料庫已有 {} 本書籍，保留書籍資料，重置其他數據...", bookCount);
+			// 2. 檢查書籍資料 (應由 data.sql 提供)
+			long bookCount = bookRepository.count();
+			if (bookCount == 0) {
+				log.warn("!!! 警告：資料庫中沒有書籍 !!! 請確認 src/main/resources/data.sql 是否正確執行。");
+			} else {
+				log.info("偵測到資料庫已有 {} 本書籍 資料來源：data.sql 或先前存檔。", bookCount);
+			}
 
-			// 2. 清除舊數據
-			clearTransientData();
-
-			// 3. 重建會員
-			List<UserBean> users = createUsers();
-
-			// 4. 重建分類
+			// 3. 檢查分類資料
 			if (clubCategoriesRepository.count() == 0) {
 				createClubCategories();
 			}
-			List<ClubCategoriesBean> clubCats = clubCategoriesRepository.findAll();
 
-			// 5. 載入現有書籍 (Persistence)
-			List<BooksBean> existingBooks = bookRepository.findAll();
-
-			// 6. 產生關聯數據
-//			 createOrders(users, existingBooks);
-			// createReviews(existingBooks, users, 5); // 每本書 5 則評價
-			// createBookClubs(10, users, existingBooks, clubCats);
-			// List<CouponBean> couponBeans = createCoupons();
-			log.info("=== 資料初始化完成：模擬真實數據已生成 ===");
+			log.info("=== 資料初始化檢查完成 ===");
 		};
 	}
 

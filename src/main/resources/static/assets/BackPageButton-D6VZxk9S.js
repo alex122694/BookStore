@@ -1,0 +1,1 @@
+import{u as e,r as n,a,c as s}from"./index-CBaLCHUK.js";const p={__name:"BackPageButton",props:{color:{type:String,default:"grey-darken-1"}},setup(o){const t=e(),r=()=>{t.back()};return(l,u)=>{const c=n("v-btn");return a(),s(c,{icon:"mdi-arrow-left",variant:"text",color:o.color,class:"mr-4",onClick:r},null,8,["color"])}}};export{p as _};
