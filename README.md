@@ -21,11 +21,13 @@
 
 ## 項目目錄 (Table of Contents)
 
-1. [架構與技術棧](#架構與技術棧)
-2. [快速上手指南](#快速上手指南)
-3. [環境變數設定](#環境變數設定)
-4. [使用說明與 API](#使用說明與-api)
-5. [維護與協作](#維護與協作)
+1. [核心功能](#核心功能-features)
+2. [架構與技術棧](#架構與技術棧-architecture--tech-stack)
+3. [快速體驗指南](#快速體驗指南-demo-quick-start)
+4. [開發人員指南](#開發人員指南-development-guide)
+5. [環境變數與設定](#環境變數與設定-configuration)
+6. [使用說明與 API](#使用說明與-api-usage--api-reference)
+7. [維護與協作](#維護與協作-maintenance--collaboration)
 
 ---
 
@@ -35,17 +37,46 @@
 ```mermaid
 graph TD
     User((使用者))
-    Frontend[Vue 3 SPA - Vite]
-    Backend[Spring Boot 3 API]
-    DB[(MS SQL Server)]
+    
+    subgraph Frontend [Vue 3 Frontend]
+        Views[Views - 頁面組件]
+        Comp[Components - 共用組件]
+        Store[Stores - Pinia 狀態管理]
+        Axios[API 層 - Axios 請求]
+    end
+
+    subgraph Backend [Spring Boot Backend]
+        Controller[Controller 層 - API 接口]
+        Service[Service 層 - 業務邏輯]
+        Repo[Repository / DAO 層 - 資料存取]
+        
+        Exception[全域異常處理 - Global Exception Handler]
+        AOP[日誌 AOP - Logging Aspect]
+    end
+
+    DB[(MS SQL Server / H2)]
     ECPay[綠界支付 API]
     GoogleAI[Google AI API]
+    Gmail[Gmail SMTP]
 
-    User <--> Frontend
-    Frontend <--> Backend
-    Backend <--> DB
-    Backend <--> ECPay
-    Backend <--> GoogleAI
+    User <--> Views
+    Views <--> Comp
+    Views <--> Store
+    Store <--> Axios
+    Axios <--> Controller
+    
+    Controller <--> Service
+    Service <--> Repo
+    Repo <--> DB
+    
+    %% 橫切關注點 (Cross-cutting Concerns)
+    Service -.-> AOP
+    Controller -.-> Exception
+    Exception -.-> User
+    
+    Service <--> ECPay
+    Service <--> GoogleAI
+    Service <--> Gmail
 ```
 
 ### 技術棧 (Tech Stack)
@@ -56,7 +87,37 @@ graph TD
 
 ---
 
-## 🛠️ 快速上手指南 (Getting Started)
+## � 快速體驗指南 (Demo Quick Start)
+
+如果您只想快速體驗本專案的功能，而不打算進行深度開發，您可以利用本專案整合的 **H2 虛擬資料庫** 與 **內建前端網頁**。
+
+### ⚡ 啟動條件
+1.  **安裝 JDK 17**：請確保您的系統已安裝 JDK 17 或更高版本。
+2.  **無需資料庫**：專案啟動時會自動在記憶體中建立 H2 資料庫。
+3.  **無需前端啟動**：Vue 前端已轉換為後端靜態檔案，直接啟動後端即可存取。
+
+### 🛠️ 啟動步驟
+1.  **複製專案**
+    ```bash
+    git clone https://github.com/alex122694/BookStore.git
+    cd BookStore
+    ```
+2.  **執行專案**
+    *   **Windows (CMD/PowerShell)**:
+        ```cmd
+        mvnw spring-boot:run
+        ```
+    *   **macOS / Linux**:
+        ```bash
+        ./mvnw spring-boot:run
+        ```
+3.  **存取路徑**：啟動完成後，開啟瀏覽器造訪 `http://localhost:8080` 即可開始體驗。
+
+---
+
+## 🛠️ 開發人員指南 (Development Guide)
+
+如果您需要進行功能開發、修改程式碼或使用實體資料庫，請參考以下步驟。
 
 ### 環境要求 (Prerequisites)
 - **Java**: JDK 17+
@@ -66,24 +127,24 @@ graph TD
 
 ### 安裝步驟 (Installation)
 
-1. **複製專案**
-   ```bash
-   git clone https://github.com/alex122694/BookStore.git
-   cd BookStore
-   ```
+1.  **複製專案**
+    ```bash
+    git clone https://github.com/alex122694/BookStore.git
+    cd BookStore
+    ```
 
-2. **後端啟動 (Backend)**
-   ```bash
-   # 確保 SQL Server 已啟動並建立名為 bookstore 的資料庫
-   ./mvnw spring-boot:run
-   ```
+2.  **後端開發啟動 (Backend)**
+    ```bash
+    # 確保 SQL Server 已啟動並建立名為 bookstore 的資料庫
+    ./mvnw spring-boot:run
+    ```
 
-3. **前端啟動 (Frontend)**
-   ```bash
-   cd bookstore-frontend
-   npm install
-   npm run dev
-   ```
+3.  **前端開發啟動 (Frontend)**
+    ```bash
+    cd bookstore-frontend
+    npm install
+    npm run dev
+    ```
 
 ---
 
@@ -106,39 +167,70 @@ VITE_GOOGLE_CLIENT_ID=您的_GOOGLE_CLIENT_ID
 
 ## 📖 使用說明與 API (Usage & API Reference)
 
-### 核心 API 範例
-- **結帳請求 (Checkout)**:
-  `POST /orders/checkout`
+本節提供系統核心模組的 API 範例。這些資訊旨在協助開發者了解如何與後端服務進行互動、驗證資料格式，以及進行系統整合測試。
+
+### 核心模組 API 範例
+
+#### 1. � 會員模組 (Member Module)
+處理使用者登入、註冊及個人資料管理。
+- **使用者登入**: `POST /api/user/login`
+- **JSON 請求範例**:
   ```json
   {
-    "paymentMethod": "信用卡",
-    "deliveryMethod": "宅配",
-    "address": "台北市...",
-    "items": [...]
+    "account": "user@example.com",
+    "password": "yourpassword123"
   }
   ```
-- **讀書會發起**:
-  `POST /api/clubs/insert` (需帶帶證明文件 MultipartFile)
 
-### 操作展示
-> 我們在 `/docs/screenshots/` 中提供了系統操作的螢幕截圖。
+#### 2. 📦 訂單模組 (Order Module)
+處理書籍購買流程、訂單查詢與狀態更新。
+- **查詢使用者訂單**: `GET /api/orders/userOrders?userId={userId}`
+- **JSON 回應範例**:
+  ```json
+  [
+    {
+      "orderId": 101,
+      "totalAmount": 1250,
+      "status": "已完成",
+      "orderDate": "2024-03-01T12:00:00"
+    }
+  ]
+  ```
+
+#### 3. � 讀書會模組 (Book Club Module)
+支持社群互動，包含發起、加入及審核讀書會。
+- **發起讀書會**: `POST /api/clubs/insert` (使用 Multipart Form Data)
+- **JSON 內容範例 (對應 `bookclub` 欄位)**:
+  ```json
+  {
+    "clubName": "Spring Boot 深度探索",
+    "description": "共同研讀 Spring Boot 原始碼與最佳實踐",
+    "categoryId": 1
+  }
+  ```
+
+#### 4. ⭐ 評論模組 (Review Module)
+管理使用者對書籍的評價與反饋。
+- **新增書籍評論**: `POST /api/public/admin/reviews`
+- **JSON 請求範例**:
+  ```json
+  {
+    "bookId": 12,
+    "userId": 45,
+    "rating": 5,
+    "comment": "內容紮實，非常適合進階開發者研讀！"
+  }
+  ```
 
 ---
 
 ## 🛡️ 維護與協作 (Maintenance & Collaboration)
 
-### 測試指南 (Testing)
-- **後端測試**: `mvn test` (JUnit 5 / MockMvc)
-- **前端測試**: `npx cypress open` (E2E 測試)
-
 ### 部署指南 (Deployment)
-1. **打包後端**: `mvn clean package` (產生 .war 檔)
-2. **打包前端**: `npm run build` (產生 dist 靜態檔案)
-3. **Docker 部署**: 專案根目錄提供 `docker-compose.yml` 範例。
+1.  **打包後端**: `mvn clean package` (產生 .war 檔)
+2.  **打包前端**: `npm run build` (產生 dist 靜態檔案)
 
-### 聯絡資訊
-- **作者**: Alex Wang
-- **Email**: onlinebookstoreforjava@gmail.com
 
-### 授權條款 (License)
-本專案採用 **MIT License**。詳情請參閱 `LICENSE` 檔案。
+
+
+
