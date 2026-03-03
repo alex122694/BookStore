@@ -1,5 +1,6 @@
 # 📚 BookStore - 全方位線上書城與讀書會平台
 
+![Java](https://img.shields.io/badge/Java-17--LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5-blue.svg)](https://vuejs.org/)
 ![Build Status](https://img.shields.io/badge/build-failing-red)
