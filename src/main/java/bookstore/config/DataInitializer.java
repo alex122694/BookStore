@@ -10,8 +10,11 @@ import java.util.Random;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import javax.sql.DataSource;
 
 import bookstore.bean.BookClubsBean;
 import bookstore.bean.BooksBean;
@@ -66,6 +69,7 @@ public class DataInitializer {
 	private final WishlistRepository wishlistRepository;
 	private final OrderReturnRepository orderReturnRepository;
 	private final UserCouponRepository userCouponRepository;
+	private final DataSource dataSource;
 
 	private final Random random = new Random();
 
@@ -74,7 +78,7 @@ public class DataInitializer {
 		return args -> {
 			log.info("=== 系統啟動：開始資料初始化流程 ===");
 
-			// 1. 檢查會員資料 (Demo 核心)
+			// 1. 檢查會員資料 (Demo 核心 - 使用 Java 建立以支援密碼加密)
 			long userCount = userRepository.count();
 			if (userCount == 0) {
 				log.info("偵測到無會員資料，開始產生初始管理員與會員...");
@@ -83,12 +87,21 @@ public class DataInitializer {
 				log.info("資料庫已有 {} 名會員，略過會員初始化。", userCount);
 			}
 
-			// 2. 檢查書籍資料 (應由 data.sql 提供)
+			// 2. 檢查書籍資料 (若無書籍，則手動執行 data.sql 載入書籍、訂單等其餘資料)
 			long bookCount = bookRepository.count();
 			if (bookCount == 0) {
-				log.warn("!!! 警告：資料庫中沒有書籍 !!! 請確認 src/main/resources/data.sql 是否正確執行。");
+				log.info("偵測到無書籍資料，開始執行 data.sql...");
+				try {
+					ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+					populator.setSqlScriptEncoding("UTF-8");
+					populator.addScript(new ClassPathResource("data.sql"));
+					populator.execute(dataSource);
+					log.info("data.sql 執行完成。");
+				} catch (Exception e) {
+					log.error("執行 data.sql 失敗: {}", e.getMessage());
+				}
 			} else {
-				log.info("偵測到資料庫已有 {} 本書籍 資料來源：data.sql 或先前存檔。", bookCount);
+				log.info("偵測到資料庫已有 {} 本書籍。", bookCount);
 			}
 
 			// 3. 檢查分類資料
@@ -96,7 +109,7 @@ public class DataInitializer {
 				createClubCategories();
 			}
 
-			log.info("=== 資料初始化檢查完成 ===");
+			log.info("=== 資料初始化完成 ===");
 		};
 	}
 
