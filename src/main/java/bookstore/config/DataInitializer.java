@@ -92,7 +92,7 @@ public class DataInitializer {
 			if (bookCount == 0) {
 				log.info("偵測到無書籍資料，開始執行 data.sql...");
 				try {
-					ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+					 ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 					populator.setSqlScriptEncoding("UTF-8");
 					populator.addScript(new ClassPathResource("data.sql"));
 					populator.execute(dataSource);
