@@ -111,7 +111,7 @@ public class DataInitializer {
 
 			
 
-			log.info("=== 資料初始化完成 ===");
+			log.info("==== 資料初始化完成 ====");
 			log.info("點擊 http://localhost:8080/ 登入使用以下帳號：TreeorTree@bookstore.com / 12345  ");
 		};
 	}
