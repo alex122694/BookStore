@@ -231,7 +231,7 @@ VITE_GOOGLE_CLIENT_ID=您的_GOOGLE_CLIENT_ID
 1.  **打包後端**: `mvn clean package` (產生 .war 檔)
 2.  **打包前端**: `npm run build` (產生 dist 靜態檔案)
 
+## 🛡️ 聲明事項
 
-
-
+本專案為資展國際培訓期間之專題作品，僅作為展示用。
 
