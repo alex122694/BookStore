@@ -1,5 +1,0 @@
-2026-03-01 21:49:25,566 [Worker-7: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is not available. Remote download required.
-2026-03-01 21:49:29,932 [Worker-9: Updating Maven Dependencies] INFO  o.e.m.c.i.p.r.ProjectRegistryRefreshJob - org.eclipse.m2e.core.internal.project.registry.ProjectRegistryRefreshJob was canceled
-2026-03-02 14:21:12,300 [Worker-8: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
-2026-03-02 14:39:22,373 [Worker-5: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
-2026-03-02 14:41:41,648 [Worker-7: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
