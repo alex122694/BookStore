@@ -3,9 +3,9 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { useUserStore } from '@/stores/userStore'
-import reviewService from '@/api/reviewService'
-import { useReportStore } from '@/stores/reportStore'
+import { useUserStore } from '@/modules/user/store/userStore'
+import reviewService from '@/modules/review/api'
+import { useReportStore } from '@/modules/review/store/reportStore'
 
 
 

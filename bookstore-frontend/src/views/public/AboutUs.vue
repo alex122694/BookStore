@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import aboutImage from '@/components/imgs/spiderspider.png'
+import aboutImage from '@/common/components/imgs/spiderspider.png'
 
 </script>
 

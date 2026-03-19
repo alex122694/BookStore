@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import bookService from '@/api/bookService'
-import orderService from '@/api/orderService.js'
-import BookCard from './books/BookCard.vue'
+import bookService from '@/modules/book/api'
+import orderService from '@/modules/order/api'
+import BookCard from '@/modules/book/views/public/BookCard.vue'
 
 const router = useRouter()
 const featuredBooks = ref([])

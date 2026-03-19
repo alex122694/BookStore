@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue' 
-import { useCartStore } from '@/stores/cartStore'
+import { useCartStore } from '@/modules/cart/store/cartStore'
 import { useRouter, useRoute } from 'vue-router' 
 import Swal from 'sweetalert2'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user/store/userStore'
 
 const cartStore = useCartStore()
 const drawer = ref(false)

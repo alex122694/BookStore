@@ -84,7 +84,7 @@ import { reactive, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user/store/userStore'
 
 const router = useRouter()
 const userStore = useUserStore()
