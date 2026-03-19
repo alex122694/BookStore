@@ -1,0 +1,12 @@
+# --- Maven 建構產物 (絕對不要推) ---
+/target/
+
+# --- Eclipse 相關 (本地保留，但不要上傳 GitHub) ---
+# 這樣做可以避免你的個人路徑設定干擾到別人
+.settings/
+.classpath
+.project
+.factorypath
+
+# --- 執行日誌 ---
+*.log
