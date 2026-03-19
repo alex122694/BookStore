@@ -10,12 +10,9 @@ desktop.ini
 *.bak
 *.swp
 
-# --- 專案層級的最後防線 ---
-# 防止不小心在根目錄執行編譯產生的雜質
 /target/
 /bin/
 /build/
 
-# --- 敏感資訊 ---
 .env.local
 

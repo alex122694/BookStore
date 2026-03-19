@@ -87,7 +87,46 @@ graph TD
 
 ---
 
-## � 快速體驗指南 (Demo Quick Start)
+## 🗂️ 專案資料夾結構 (Project Structure)
+
+本專案採前後端分離開發，並落實了 **Package-by-Feature (依業務功能分包)** 的高內聚力架構：
+
+```text
+BookStore/
+├── bookstore-backend/       # Spring Boot 後端專案
+│   └── src/main/java/com/bookstore/
+│       ├── book/            # 圖書模組 (Controller, Service, Repository, Entity)
+│       ├── user/            # 會員模組
+│       ├── order/           # 訂單模組
+│       ├── cart/            # 購物車模組
+│       ├── bookclub/        # 讀書會模組
+│       ├── review/          # 評論與檢舉模組
+│       ├── stocklog/        # 進銷存模組
+│       └── core/            # 核心基礎設施 (共用 DTO, 安全配置, 例外處理)
+├── bookstore-frontend/      # Vue 3 Vite 前端專案
+│   ├── public/              # 靜態資源 
+│   └── src/                 
+│       ├── common/          # 全域共用模組區
+│       │   ├── components/  # 通用 UI 組件
+│       │   ├── hooks/       # 共用組合式函數 (Composables)
+│       │   ├── utils/       # 工具類與格式化腳本
+│       │   └── api/         # Axios 核心配置與攔截器
+│       ├── modules/         # 🚀 業務模組中心 (依功能完全獨立)
+│       │   ├── book/        # 圖書模組 (專屬 API, components, views, store)
+│       │   ├── user/        # 會員模組 
+│       │   ├── order/       # 訂單模組 
+│       │   └── ...          # 其他業務模組
+│       ├── router/          # 路由全局配置
+│       └── App.vue          # Vue 根組件
+│
+├── database/                # 資料庫相關 SQL 腳本或設定檔
+├── docs/                    # 開發文件存放區
+└── scripts/                 # 開發工具腳本區
+```
+
+---
+
+## ⚡ 快速體驗指南 (Demo Quick Start)
 
 如果您只想快速體驗本專案的功能，而不打算進行深度開發，您可以利用本專案整合的 **H2 虛擬資料庫** 與 **內建前端網頁**。
 
