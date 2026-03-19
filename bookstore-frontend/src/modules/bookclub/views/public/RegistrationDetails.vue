@@ -30,7 +30,7 @@ const search = ref('');
 const headers = [
     { title: '會員名稱', key: 'user.userName', sortable: true },
     { title: 'Email', key: 'user.email', sortable: true },
-    { title:'電話', key: 'user.phoneNum', sortable: true },
+    { title: '電話', key: 'user.phoneNum', sortable: true },
     { title: '報名時間', key: 'registeredAt', sortable: true },
     { title: '狀態', key: 'status', sortable: true },
     { title: '報到', key: 'checkIn', sortable: true },
