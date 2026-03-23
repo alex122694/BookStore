@@ -3,7 +3,7 @@
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5-blue.svg)](https://vuejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/Build-passing-brightgreen.svg)](#)
+[![Build Status](https://img.shields.io/badge/Build-building-yellow.svg)](#)
 
 **BookStore** 是一個專為愛書人設計的現代化全端電商平台，結合了「書籍購買」、「讀書會社群」。我們不僅解決了書籍購買的便利性，更透過讀書會機制，連結讀者，打造深度的知識交換社群。
 
